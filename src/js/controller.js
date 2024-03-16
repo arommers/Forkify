@@ -1,9 +1,11 @@
 import * as model from './model.js'
+import {MODAL_CLOSE_SEC} from './config.js'
 import recipeView from './views/recipeView.js'
 import searchView from './views/searchView.js'
 import resultsView from './views/resultsView.js'
 import paginationView from './views/paginationView.js'
 import bookmarksView from './views/bookmarksView.js'
+import addRecipeView from './views/addRecipeView.js'
 
 // polyfilling async/await
 import 'regenerator-runtime/runtime'
@@ -74,11 +76,11 @@ const controlSearchResults = async function()
 
 const controlPagination = function(goToPage)
 {
-    // render  new results
-    resultsView.render(model.getSearchResultsPage(goToPage));
+  // render  new results
+  resultsView.render(model.getSearchResultsPage(goToPage));
 
-    // render new paginations button
-    paginationView.render(model.state.search)
+  // render new paginations button
+  paginationView.render(model.state.search)
 }
 
 const controlServings = function(newServings)
@@ -112,6 +114,37 @@ const controlBookmarks = function()
   bookmarksView.render(model.state.bookmarks);
 }
 
+const controlAddRecipe = async function(newRecipe)
+{
+  try
+  {
+    //Show loading Spinner
+    addRecipeView.renderSpinner();    
+    
+    // upload new recipe
+    await model.uploadRecipe(newRecipe);
+    console.log(model.state.recipe);
+
+    // render recipe
+    recipeView.render(model.state.recipe);
+
+    // set succes message
+    addRecipeView.renderMessage();
+
+    // close form window
+    setTimeout(function()
+    {
+      addRecipeView.toggleWindow()
+    }, MODAL_CLOSE_SEC * 1000);
+  }
+  catch(error)
+  {
+    console.log('❤', error);
+    addRecipeView.renderError(error.message);
+  }
+  //upload the new recipe data
+}
+
 const init = function()
 {
   bookmarksView.addHandlerRender(controlBookmarks);
@@ -120,6 +153,7 @@ const init = function()
   recipeView.addHandlerAddBookmark(controlAddBookmark);
   searchView.addHandlerSearch(controlSearchResults);
   paginationView.addHandleClick(controlPagination);
+  addRecipeView.addhandlerUpload(controlAddRecipe);
 }
 
 init();
