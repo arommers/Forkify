@@ -1,0 +1,4 @@
+#ignore build artefacts
+node_modules
+.parcel-cache
+dist
