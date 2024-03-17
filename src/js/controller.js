@@ -9,6 +9,7 @@ import addRecipeView from './views/addRecipeView.js'
 
 // polyfilling async/await
 import 'regenerator-runtime/runtime'
+
 // polyfilling everything else
 import 'core-js/stable';
 
